@@ -1,0 +1,75 @@
+.espadas {
+    color: rgb(95, 136, 247);
+}
+
+.bastos {
+    color: rgb(47, 141, 47);
+}
+
+.copas {
+    color: rgb(187, 34, 34);
+}
+
+.oros {
+    color: rgb(161, 161, 21);
+}
+
+.icono-grande {
+    font-size: 50px;
+}
+
+.icono-chico {
+    font-size: 21px;
+    margin-left: 2px;
+}
+
+.carta {
+    border-radius: 10px;
+    border: 3px;
+    border-color: rgb(243, 193, 176);
+    border-style: double;
+    background-color: rgb(242, 242, 242);
+    height: 21vh;
+    width: 11%;
+    margin-right: 2.5%;
+    margin-left: 2.5%;
+    ;
+    margin-bottom: 5px;
+}
+
+.cabecera {
+    background-color: black;
+    color: whitesmoke;
+    margin-bottom: 5px;
+}
+
+.oculta {
+    background-color: darkseagreen;
+    border-radius: 10px;
+    border: 3px;
+    border-color: rgb(243, 193, 176);
+    border-style: double;
+    height: 21vh;
+    width: 11%;
+    margin-right: 2.5%;
+    margin-left: 2.5%;
+    margin-bottom: 5px;
+}
+
+.oculta * {
+    display: none;
+}
+
+.top-carta {
+    text-align: left;
+    margin: 2px;
+}
+
+.mid-carta {
+    height: 54%;
+}
+
+.bot-carta {
+    text-align: right;
+    margin: 2px;
+}

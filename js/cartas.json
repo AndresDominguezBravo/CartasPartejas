@@ -1,0 +1,104 @@
+[{
+        "numero": 12,
+        "palo": "Espadas",
+        "icon": "fas fa-slash"
+    },
+    {
+        "numero": 11,
+        "palo": "Espadas",
+        "icon": "fas fa-slash"
+    },
+    {
+        "numero": 10,
+        "palo": "Espadas",
+        "icon": "fas fa-slash"
+    },
+    {
+        "numero": 3,
+        "palo": "Espadas",
+        "icon": "fas fa-slash"
+    },
+    {
+        "numero": 1,
+        "palo": "Espadas",
+        "icon": "fas fa-slash"
+    },
+    {
+        "numero": 12,
+        "palo": "Bastos",
+        "icon": "fas fa-bacon"
+    },
+    {
+        "numero": 11,
+        "palo": "Bastos",
+        "icon": "fas fa-bacon"
+    },
+
+    {
+        "numero": 10,
+        "palo": "Bastos",
+        "icon": "fas fa-bacon"
+    },
+    {
+        "numero": 3,
+        "palo": "Bastos",
+        "icon": "fas fa-bacon"
+    },
+    {
+        "numero": 1,
+        "palo": "Bastos",
+        "icon": "fas fa-bacon"
+    },
+    {
+        "numero": 12,
+        "palo": "Copas",
+        "icon": "fas fa-wine-glass"
+    },
+    {
+        "numero": 11,
+        "palo": "Copas",
+        "icon": "fas fa-wine-glass"
+    },
+
+    {
+        "numero": 10,
+        "palo": "Copas",
+        "icon": "fas fa-wine-glass"
+    },
+    {
+        "numero": 3,
+        "palo": "Copas",
+        "icon": "fas fa-wine-glass"
+    },
+    {
+        "numero": 1,
+        "palo": "Copas",
+        "icon": "fas fa-wine-glass"
+    },
+    {
+        "numero": 12,
+        "palo": "Oros",
+        "icon": "fab fa-bitcoin"
+    },
+    {
+        "numero": 11,
+        "palo": "Oros",
+        "icon": "fab fa-bitcoin"
+    },
+
+    {
+        "numero": 10,
+        "palo": "Oros",
+        "icon": "fab fa-bitcoin"
+    },
+    {
+        "numero": 3,
+        "palo": "Oros",
+        "icon": "fab fa-bitcoin"
+    },
+    {
+        "numero": 1,
+        "palo": "Oros",
+        "icon": "fab fa-bitcoin"
+    }
+]
