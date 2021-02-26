@@ -27,25 +27,18 @@
 
 <body class="container">
     <div class="cabecera row col-12">
-        <div class="topTres col-4 d-flex flex-wrap align-content-center justify-content-center">
-            <span>ADB : 12</span>
-            <span>ADB : 12</span>
-            <span>ADB : 12</span>
+        <div class="top-tres col-4 text-center">
+            <p>BEST SCORE</p>
+            <span></span>
+            <span></span>
         </div>
-        <div class="score col-4 justify-content-center">
-            <p>Intentos maximos: <span></span> </p>
+        <div class="score col-4 text-center">
             <p>Intentos: <span></span> </p>
             <p>Puntos: <span></span> </p>
         </div>
         <div class="botonera col-4 d-flex flex-wrap align-content-center justify-content-center">
             <button type="button" id="modal" data-toggle="modal" data-target=".bd-example-modal-sm" class="btn"><i class="fas fa-cog text-white"></i></button>
         </div>
-    </div>
-    <div class="alert alert-danger d-none" role="alert">
-        <strong>Derrota</strong> intentalo de nuevo.
-    </div>
-    <div class="alert alert-success d-none" role="alert">
-        <strong>Enhorabuena</strong> tienes muy buen coco.
     </div>
     <div class="row tablero d-flex justify-content-between col-12">
         <div id="carta" class='oculta d-none'>
@@ -71,21 +64,27 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
+
                 <div class="modal-body">
+                    <div class="alert alert-danger d-none" role="alert">
+                        <strong>Derrota</strong> intentalo de nuevo.
+                    </div>
+                    <div class="alert alert-success d-none" role="alert">
+                        <strong>Enhorabuena</strong> tienes muy buen coco.
+                    </div>
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Intentos maximos</span>
                         </div>
                         <input type="number" id="intentosMaximos" min="12" value=30 class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                    </div>
-                    <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Iniciale de puntuación</span>
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Iniciales del jugador</span>
                         </div>
-                        <input type="text" maxlength="3" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <input type="text" id="nombre" maxlength="3" placeholder="DFL" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" id="guardar" class="btn btn-primary">Guardar Score</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" id="reiniciar" data-dismiss="modal" class="btn btn-primary">Reiniciar</button>
                 </div>

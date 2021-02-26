@@ -73,3 +73,16 @@
     text-align: right;
     margin: 2px;
 }
+
+.top-tres span {
+    padding: 2px;
+    margin: 1px;
+}
+
+.top-tres {
+    display: block;
+}
+
+.active {
+    border: 1px solid red;
+}

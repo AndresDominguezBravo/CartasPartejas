@@ -1,13 +1,22 @@
-var enumTurno = {
+var estadoPartida = {
     PARADO: 0,
-    LEVANTO: 1
+    LEVANTO: 1,
+    FIN_PARTIDA: 2
 }
 
-var turno = enumTurno.PARADO;
+var turno = estadoPartida.PARADO;
 var ultimaCartaLevantada;
-var intentosMaximos;
-var intentosTotales = 0;
+var intentosRestantes = 0;
 var puntos = 0;
+
+var formatoCarta;
+
+console.log(Object.keys(localStorage));
+if (localStorage.getItem("MejorPuntuacion") == undefined && localStorage.getItem("MejorPuntuacion") == undefined) {
+    localStorage.setItem("MejorPuntuacion", 0);
+    localStorage.setItem("Iniciales", "DFL");
+}
+
 
 $("document").ready(function() {
     init();
@@ -18,117 +27,153 @@ $("document").ready(function() {
         leerJson();
     });
 
+    $("#guardar").click(function() {
+        var nombre = $("#nombre").val();
+        if (nombre != "") {
+            localStorage.setItem("MejorPuntuacion", puntos);
+            localStorage.setItem("Iniciales", nombre);
+        } else {
+            $("#nombre").addClass("active");
+        }
+    });
+
 
 });
 
 
 $(document).on('click', '.oculta', function() {
 
-    if (intentosMaximos >= intentosTotales) {
-        if (turno == enumTurno.PARADO) {
+    if (turno != estadoPartida.FIN_PARTIDA) {
+        if (turno == estadoPartida.PARADO) {
 
             $(this).removeClass("oculta").addClass("carta");
             ultimaCartaLevantada = $(this);
-            turno = enumTurno.LEVANTO;
+            turno = estadoPartida.LEVANTO;
 
-        } else if (turno == enumTurno.LEVANTO) {
+        } else if (turno == estadoPartida.LEVANTO) {
 
             $(this).removeClass("oculta").addClass("carta");
             var cartaActural = $(this);
-            validarEmparejamiento(ultimaCartaLevantada, cartaActural)
-            turno = enumTurno.PARADO;
-
+            validarEmparejamiento(ultimaCartaLevantada, cartaActural);
         }
-
     }
 
 
 });
 
 function init() {
-    intentosMaximos = $("#intentosMaximos").val();
-    $(".score").children().first().children().text(intentosMaximos);
+    //dar valor a el Marcador de puntos.
+    intentosRestantes = $("#intentosMaximos").val();
     $(".score").children().last().children().text(puntos);
-    $(".score").children().eq(1).children().text(intentosTotales);
+    $(".score").children().first().children().text(intentosRestantes);
+
+    //copiar el html del formato de la carta.
+    formatoCarta = $("#carta").clone(true);
+    formatoCarta.addClass("d-block");
+    formatoCarta.removeAttr("id");
+
+    //Mejor puntuacion de localStorage.
+    $(".top-tres").children().eq(1).text(localStorage.getItem("Iniciales"));
+    $(".top-tres").children().last().text(localStorage.getItem("MejorPuntuacion"));
+
 }
 
 function limpiarScore() {
     puntos = 0;
-    intentosTotales = 0;
-    intentosMaximos = $("#intentosMaximos").val();
-    $(".score").children().first().children().text(intentosMaximos);
+    intentosRestantes = $("#intentosMaximos").val();
+    $(".score").children().first().children().text(intentosRestantes);
     $(".score").children().last().children().text(puntos);
-    $(".score").children().eq(1).children().text(intentosTotales);
+    $(".alert-success").addClass("d-none");
+    $(".alert-danger").addClass("d-none");
+
+
+    turno = estadoPartida.PARADO;
 }
 
 function validarEmparejamiento(ultimaCartaLevantada, cartaActural) {
     if (ultimaCartaLevantada.children("input").val() == cartaActural.children("input").val()) {
         puntos++;
-        intentosTotales++;
+        intentosRestantes--;
         $(".score").children().last().children().text(puntos);
-        $(".score").children().eq(1).children().text(intentosTotales);
+        $(".score").children().first().children().text(intentosRestantes);
 
     } else {
         setTimeout(function() {
             cartaActural.addClass("oculta").removeClass("carta");
             ultimaCartaLevantada.addClass("oculta").removeClass("carta");
         }, 1000);
-        intentosTotales++;
-        $(".score").children().eq(1).children().text(intentosTotales);
+        intentosRestantes--;
+        $(".score").children().first().children().text(intentosRestantes);
 
     }
+
+    turno = estadoPartida.PARADO;
 
     if (puntos == 12) {
         $(".alert-success").removeClass("d-none");
+        $(".modal").modal("show");
+        turno = estadoPartida.FIN_PARTIDA;
     }
-    if (intentosTotales > intentosMaximos) {
+    if (intentosRestantes == 0) {
         $(".alert-danger").removeClass("d-none");
+        $(".modal").modal("show");
+        turno = estadoPartida.FIN_PARTIDA;
     }
 }
 
 function crearBarajarCartas(cartas) {
+    var clon = cartas.splice(0, 12);
+    clon = clon.concat(clon);
+    return clon;
+}
 
-    while (cartas.length > 12) {
-        cartas.splice(Math.floor(Math.random() * cartas.length), 1);
+function bararjar(cartas) {
+    var currentIndex = cartas.length,
+        temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = cartas[currentIndex];
+        cartas[currentIndex] = cartas[randomIndex];
+        cartas[randomIndex] = temporaryValue;
     }
-    var clon = cartas;
-    cartas = cartas.concat(clon);
-    cartas.sort(() => Math.random() - 0.5);
     return cartas;
+}
+
+function repartir(cartas) {
+    $(".tablero").html("");
+    cartas = bararjar(cartas);
+    cartas.forEach(element => {
+        var nuevaCarta = formatoCarta.clone();
+        nuevaCarta.children("div").children("h4").children("i").before(element.numero);
+        nuevaCarta.children("div").children("h4").children("i").addClass(element.icon).addClass(element.palo.toLowerCase());
+        nuevaCarta.children("input").attr("value", element.numero + "," + element.palo);
+        switch (element.numero) {
+            case 12:
+                nuevaCarta.children("div").children("i").addClass("fas fa-chess-king").addClass(element.palo.toLowerCase());
+                break;
+
+            case 11:
+                nuevaCarta.children("div").children("i").addClass("fas fa-chess-knight").addClass(element.palo.toLowerCase());
+                break;
+
+            case 10:
+                nuevaCarta.children("div").children("i").addClass("fas fa-female").addClass(element.palo.toLowerCase());
+                break;
+
+            default:
+                nuevaCarta.children("div").children("i").addClass(element.icon).addClass(element.palo.toLowerCase());
+                break;
+        }
+        $(".tablero").append(nuevaCarta);
+
+    });
 
 }
 
 function leerJson() {
     $.getJSON("js/cartas.json", function(cartas) {
-        crearBarajarCartas(cartas).forEach(element => {
-            var c = $("#carta").clone();
-            c.addClass("d-block");
-            c.removeAttr("id");
-            c.children("div").children("h4").children("i").before(element.numero);
-            c.children("div").children("h4").children("i").addClass(element.icon).addClass(element.palo.toLowerCase());
-            c.children("input").attr("value", element.numero + "," + element.palo);
-            switch (element.numero) {
-                case 12:
-                    c.children("div").children("i").addClass("fas fa-chess-king").addClass(element.palo.toLowerCase());
-                    break;
-
-                case 11:
-                    c.children("div").children("i").addClass("fas fa-chess-knight").addClass(element.palo.toLowerCase());
-                    break;
-
-                case 10:
-                    c.children("div").children("i").addClass("fas fa-female").addClass(element.palo.toLowerCase());
-                    break;
-
-                default:
-                    c.children("div").children("i").addClass(element.icon).addClass(element.palo.toLowerCase());
-                    break;
-            }
-            $(".tablero").append(c);
-
-
-        });
-        $("#carta").remove();
-
+        cartas = bararjar(cartas);
+        repartir(crearBarajarCartas(cartas));
     });
 }
