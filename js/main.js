@@ -3,37 +3,28 @@ var estadoPartida = {
     LEVANTO: 1,
     FIN_PARTIDA: 2
 }
-
 var turno = estadoPartida.PARADO;
 var ultimaCartaLevantada;
 var intentosRestantes = 0;
 var puntos = 0;
-
 var formatoCarta;
 
 console.log(Object.keys(localStorage));
-if (localStorage.getItem("MejorPuntuacion") == undefined && localStorage.getItem("MejorPuntuacion") == undefined) {
-    localStorage.setItem("MejorPuntuacion", 0);
-    localStorage.setItem("Iniciales", "DFL");
-}
-
 
 $("document").ready(function() {
-    init();
+    iniciarPartida();
     leerJson();
 
     $("#reiniciar").click(function() {
-        limpiarScore();
+        resetPartida();
         leerJson();
     });
 
-    $("#guardar").click(function() {
-        var nombre = $("#nombre").val();
-        if (nombre != "") {
-            localStorage.setItem("MejorPuntuacion", puntos);
-            localStorage.setItem("Iniciales", nombre);
+    $("#nombre").change(function() {
+        if ($(this).val().length < 3) {
+            $(this).addClass("active");
         } else {
-            $("#nombre").addClass("active");
+            $(this).removeClass("active");
         }
     });
 
@@ -54,14 +45,14 @@ $(document).on('click', '.oculta', function() {
 
             $(this).removeClass("oculta").addClass("carta");
             var cartaActural = $(this);
-            validarEmparejamiento(ultimaCartaLevantada, cartaActural);
+            validarPareja(ultimaCartaLevantada, cartaActural);
         }
     }
 
 
 });
 
-function init() {
+function iniciarPartida() {
     //dar valor a el Marcador de puntos.
     intentosRestantes = $("#intentosMaximos").val();
     $(".score").children().last().children().text(puntos);
@@ -72,13 +63,16 @@ function init() {
     formatoCarta.addClass("d-block");
     formatoCarta.removeAttr("id");
 
+    localStorageAPI.guardar("MejorPuntuacion", 0);
+    localStorageAPI.guardar("Iniciales", "DFL");
+
     //Mejor puntuacion de localStorage.
-    $(".top-tres").children().eq(1).text(localStorage.getItem("Iniciales"));
-    $(".top-tres").children().last().text(localStorage.getItem("MejorPuntuacion"));
+    $(".top-tres").children().eq(1).text(localStorageAPI.leer("Iniciales"));
+    $(".top-tres").children().last().text(localStorageAPI.leer("MejorPuntuacion"));
 
 }
 
-function limpiarScore() {
+function resetPartida() {
     puntos = 0;
     intentosRestantes = $("#intentosMaximos").val();
     $(".score").children().first().children().text(intentosRestantes);
@@ -86,11 +80,11 @@ function limpiarScore() {
     $(".alert-success").addClass("d-none");
     $(".alert-danger").addClass("d-none");
 
-
     turno = estadoPartida.PARADO;
 }
 
-function validarEmparejamiento(ultimaCartaLevantada, cartaActural) {
+function validarPareja(ultimaCartaLevantada, cartaActural) {
+
     if (ultimaCartaLevantada.children("input").val() == cartaActural.children("input").val()) {
         puntos++;
         intentosRestantes--;
@@ -107,21 +101,64 @@ function validarEmparejamiento(ultimaCartaLevantada, cartaActural) {
 
     }
 
-    turno = estadoPartida.PARADO;
+    comprobarEstadoPartida();
 
+}
+
+function comprobarEstadoPartida() {
     if (puntos == 12) {
+        //con este estado terminamos la partida.
+        turno = estadoPartida.FIN_PARTIDA;
+        guardarNuevoRecord(puntos);
+
+        /*
+            mostramos los elementos para teminar partida
+            la clase modal que dentro tiene dos mensajes.
+                en este caso al conseguir 12 puntos mostramos el de victoria.
+        */
         $(".alert-success").removeClass("d-none");
         $(".modal").modal("show");
+
+    } else if (intentosRestantes == 0) {
+
         turno = estadoPartida.FIN_PARTIDA;
-    }
-    if (intentosRestantes == 0) {
+        guardarNuevoRecord(puntos);
+
+        /*
+            mostramos los elementos para teminar partida
+            la clase modal que dentro tiene dos mensajes.
+                en este caso al agotar los intentos mostramos el de derrota.
+        */
+
         $(".alert-danger").removeClass("d-none");
         $(".modal").modal("show");
-        turno = estadoPartida.FIN_PARTIDA;
+
+    } else {
+        turno = estadoPartida.PARADO;
+    }
+
+
+}
+
+function guardarNuevoRecord(puntos) {
+    /*
+    Si superas el record actual o lo igualas se guarda hasta que lo superen.
+    Las iniciales elegidas en ajustes son las que se guardan tambien, por defecto
+    se guarda las iniciale "DFL" de "default".
+    */
+    if (parseInt(localStorageAPI.leer("MejorPuntuacion")) <= puntos) {
+        localStorageAPI.actualizar("MejorPuntuacion", puntos);
+        if ($("#nombre").val() == "" || $("#nombre").val().length < 3) {
+            localStorageAPI.actualizar("Iniciales", "DFL");
+        } else {
+            localStorageAPI.actualizar("Iniciales", $("#nombre").val().toUpperCase());
+        }
+        $(".top-tres").children().eq(1).text(localStorageAPI.leer("Iniciales"));
+        $(".top-tres").children().last().text(localStorageAPI.leer("MejorPuntuacion"));
     }
 }
 
-function crearBarajarCartas(cartas) {
+function cortarBaraja(cartas) {
     var clon = cartas.splice(0, 12);
     clon = clon.concat(clon);
     return clon;
@@ -174,6 +211,6 @@ function repartir(cartas) {
 function leerJson() {
     $.getJSON("js/cartas.json", function(cartas) {
         cartas = bararjar(cartas);
-        repartir(crearBarajarCartas(cartas));
+        repartir(cortarBaraja(cartas));
     });
 }

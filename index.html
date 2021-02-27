@@ -13,7 +13,10 @@
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/localStorgeCRUD.js"></script>
     <script src="js/main.js"></script>
+
+
 
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -76,17 +79,15 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Intentos maximos</span>
                         </div>
-                        <input type="number" id="intentosMaximos" min="12" value=30 class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <input type="number" id="intentosMaximos" min="12" max="100" value=30 class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Iniciales del jugador</span>
                         </div>
                         <input type="text" id="nombre" maxlength="3" placeholder="DFL" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" id="guardar" class="btn btn-primary">Guardar Score</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="reiniciar" data-dismiss="modal" class="btn btn-primary">Reiniciar</button>
+                <div class="modal-footer d-flex flex-wrap align-content-center justify-content-center">
+                    <button type="button" id="reiniciar" data-dismiss="modal" class="btn btn-primary"><i class="fas fa-redo-alt"></i></button>
                 </div>
             </div>
         </div>
@@ -117,5 +118,6 @@
     SOTA
     <i class="fas fa-female"></i>
 
+    redo-alt
 
 -->
