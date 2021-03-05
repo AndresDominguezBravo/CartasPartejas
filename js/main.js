@@ -37,12 +37,15 @@ $(document).on('click', '.oculta', function() {
     if (turno != estadoPartida.FIN_PARTIDA) {
         if (turno == estadoPartida.PARADO) {
 
+            $(this).parent().addClass("rotar");
             $(this).removeClass("oculta").addClass("carta");
+
+
             ultimaCartaLevantada = $(this);
             turno = estadoPartida.LEVANTO;
 
         } else if (turno == estadoPartida.LEVANTO) {
-
+            $(this).parent().addClass("rotar");
             $(this).removeClass("oculta").addClass("carta");
             var cartaActural = $(this);
             validarPareja(ultimaCartaLevantada, cartaActural);
@@ -95,7 +98,10 @@ function validarPareja(ultimaCartaLevantada, cartaActural) {
         setTimeout(function() {
             cartaActural.addClass("oculta").removeClass("carta");
             ultimaCartaLevantada.addClass("oculta").removeClass("carta");
-        }, 1000);
+            cartaActural.parent().removeClass("rotar");
+            ultimaCartaLevantada.parent().removeClass("rotar");
+
+        }, 1500);
         intentosRestantes--;
         $(".score").children().first().children().text(intentosRestantes);
 
@@ -182,24 +188,27 @@ function repartir(cartas) {
     cartas = bararjar(cartas);
     cartas.forEach(element => {
         var nuevaCarta = formatoCarta.clone();
-        nuevaCarta.children("div").children("h4").children("i").before(element.numero);
-        nuevaCarta.children("div").children("h4").children("i").addClass(element.icon).addClass(element.palo.toLowerCase());
-        nuevaCarta.children("input").attr("value", element.numero + "," + element.palo);
+
+
+
+        nuevaCarta.find(".icono-chico").before(element.numero);
+        nuevaCarta.find(".icono-chico").addClass(element.icon).addClass(element.palo.toLowerCase());
+        nuevaCarta.find("input").attr("value", element.numero + "," + element.palo);
         switch (element.numero) {
             case 12:
-                nuevaCarta.children("div").children("i").addClass("fas fa-chess-king").addClass(element.palo.toLowerCase());
+                nuevaCarta.find(".icono-grande").addClass("fas fa-chess-king").addClass(element.palo.toLowerCase());
                 break;
 
             case 11:
-                nuevaCarta.children("div").children("i").addClass("fas fa-chess-knight").addClass(element.palo.toLowerCase());
+                nuevaCarta.find(".icono-grande").addClass("fas fa-chess-knight").addClass(element.palo.toLowerCase());
                 break;
 
             case 10:
-                nuevaCarta.children("div").children("i").addClass("fas fa-female").addClass(element.palo.toLowerCase());
+                nuevaCarta.find(".icono-grande").addClass("fas fa-female").addClass(element.palo.toLowerCase());
                 break;
 
             default:
-                nuevaCarta.children("div").children("i").addClass(element.icon).addClass(element.palo.toLowerCase());
+                nuevaCarta.find(".icono-grande").addClass(element.icon).addClass(element.palo.toLowerCase());
                 break;
         }
         $(".tablero").append(nuevaCarta);
