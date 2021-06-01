@@ -1,3 +1,62 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f2f1e8;
+    overflow: hidden;
+}
+
+.fondo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.block {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: #c6d8cf;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.block:nth-child(3n + 2) {
+    background: #edc8b0;
+}
+
+.block:nth-child(3n + 3) {
+    background: #dfbbb6;
+}
+
+button {
+    position: relative;
+    z-index: 1;
+    margin: 10px;
+    border: none;
+    outline: none;
+    background: #fff;
+    font-size: 1.2em;
+    padding: 15px 30px;
+    cursor: pointer;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.tablero {
+    position: absolute;
+    top: 82px;
+}
+
 .espadas {
     color: rgb(95, 136, 247);
 }
@@ -29,18 +88,13 @@
     width: 11%;
     margin-right: 2.5%;
     margin-left: 2.5%;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     transition: transform 1.0s;
     transform-style: preserve-3d;
 }
 
 .carta {
     background-color: rgb(242, 242, 242);
-    border-radius: 7px;
-    border-radius: 10px;
-    border: 3px;
-    border-color: rgb(243, 193, 176);
-    border-style: double;
     transform: rotateY(180deg);
 }
 
@@ -51,15 +105,43 @@
     height: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-}
-
-.oculta {
-    background-color: darkseagreen;
+    box-shadow: 0 0 1px 1px #7692f6, 0 0 1px 3px #7692f6;
+    border-color: rgb(255, 255, 255);
+    border-style: double;
     border-radius: 7px;
     border-radius: 10px;
     border: 3px;
-    border-color: rgb(243, 193, 176);
-    border-style: double;
+    z-index: 1;
+}
+
+.carta hr {
+    display: none;
+}
+
+.oculta {
+    background-color: #eee;
+    overflow: hidden;
+}
+
+.oculta hr {
+    margin: 0px;
+    padding: 0px;
+    border: 12px;
+    display: block;
+    border-color: #7692f6;
+    border-style: dotted none none none;
+}
+
+.oculta hr:nth-child(3n + 2) {
+    border-color: #bd70f0;
+}
+
+.oculta hr:nth-child(3n + 3) {
+    border-color: #f37ed0;
+}
+
+.oculta * {
+    display: none;
 }
 
 .rotar {
@@ -70,10 +152,11 @@
     background-color: black;
     color: whitesmoke;
     margin-bottom: 5px;
-}
-
-.oculta * {
-    display: none;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
+    position: absolute;
+    top: 0;
+    height: 80px;
+    z-index: 1;
 }
 
 .top-carta {

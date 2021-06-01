@@ -5,20 +5,32 @@ var estadoPartida = {
 }
 var turno = estadoPartida.PARADO;
 var ultimaCartaLevantada;
-var intentosRestantes = 0;
-var puntos = 0;
+var totalIntentos = 0;
+var tiempoRestante;
 var formatoCarta;
-
+var contadorTiempo;
+var encontrados = 0;
+const tiempo = 60;
 console.log(Object.keys(localStorage));
 
 $("document").ready(function() {
-    iniciarPartida();
-    leerJson();
+    cargarfondo();
+    //iniciarPartida();
+    //leerJson();
+
 
     $("#reiniciar").click(function() {
         resetPartida();
         leerJson();
+        generate();
     });
+
+    $("#iniciar").click(function() {
+        iniciarPartida();
+        leerJson();
+    });
+
+
 
     $("#nombre").change(function() {
         if ($(this).val().length < 3) {
@@ -30,6 +42,7 @@ $("document").ready(function() {
 
 
 });
+
 
 
 $(document).on('click', '.oculta', function() {
@@ -57,9 +70,9 @@ $(document).on('click', '.oculta', function() {
 
 function iniciarPartida() {
     //dar valor a el Marcador de puntos.
-    intentosRestantes = $("#intentosMaximos").val();
-    $(".score").children().last().children().text(puntos);
-    $(".score").children().first().children().text(intentosRestantes);
+
+    //$(".score").children().last().children().text(puntos);
+    $(".score").children().first().children().text(totalIntentos);
 
     //copiar el html del formato de la carta.
     formatoCarta = $("#carta").clone(true);
@@ -73,13 +86,43 @@ function iniciarPartida() {
     $(".top-tres").children().eq(1).text(localStorageAPI.leer("Iniciales"));
     $(".top-tres").children().last().text(localStorageAPI.leer("MejorPuntuacion"));
 
+    $("#iniciar").hide();
+    tiempoRestante = tiempo;
+    cuentaAtras();
+
+}
+
+function cuentaAtras(parametroTiempo) {
+    if (tiempoRestante <= 5) {
+        $(".score").children().last().children().css("color", "red");
+        $(".score").children().last().children().text(tiempoRestante);
+    } else {
+        $(".score").children().last().children().text(tiempoRestante);
+    }
+
+    if (parametroTiempo == 'parar') {
+        clearTimeout(contadorTiempo);
+    } else {
+        if (tiempoRestante == 0) {
+            clearTimeout(contadorTiempo);
+            comprobarEstadoPartida();
+        } else {
+            tiempoRestante -= 1;
+            contadorTiempo = setTimeout("cuentaAtras()", 1000);
+        }
+    }
+
+
 }
 
 function resetPartida() {
-    puntos = 0;
-    intentosRestantes = $("#intentosMaximos").val();
-    $(".score").children().first().children().text(intentosRestantes);
-    $(".score").children().last().children().text(puntos);
+    totalIntentos = 0;
+    encontrados = 0;
+    cuentaAtras('parar');
+    tiempoRestante = tiempo;
+    cuentaAtras();
+    $(".score").children().first().children().text(totalIntentos);
+    $(".score").children().last().children().text(tiempoRestante);
     $(".alert-success").addClass("d-none");
     $(".alert-danger").addClass("d-none");
 
@@ -89,10 +132,11 @@ function resetPartida() {
 function validarPareja(ultimaCartaLevantada, cartaActural) {
 
     if (ultimaCartaLevantada.children("input").val() == cartaActural.children("input").val()) {
-        puntos++;
-        intentosRestantes--;
-        $(".score").children().last().children().text(puntos);
-        $(".score").children().first().children().text(intentosRestantes);
+        encontrados++;
+        totalIntentos++;
+        $(".score").children().last().children().text(tiempoRestante);
+        $(".score").children().first().children().text(totalIntentos);
+
 
     } else {
         setTimeout(function() {
@@ -102,58 +146,46 @@ function validarPareja(ultimaCartaLevantada, cartaActural) {
             ultimaCartaLevantada.parent().removeClass("rotar");
 
         }, 1500);
-        intentosRestantes--;
-        $(".score").children().first().children().text(intentosRestantes);
+        totalIntentos++;
+        $(".score").children().first().children().text(totalIntentos);
 
     }
-
+    turno = estadoPartida.PARADO;
     comprobarEstadoPartida();
 
 }
 
+
 function comprobarEstadoPartida() {
-    if (puntos == 12) {
+    if (encontrados == 12) {
         //con este estado terminamos la partida.
         turno = estadoPartida.FIN_PARTIDA;
-        guardarNuevoRecord(puntos);
-
-        /*
-            mostramos los elementos para teminar partida
-            la clase modal que dentro tiene dos mensajes.
-                en este caso al conseguir 12 puntos mostramos el de victoria.
-        */
+        guardarNuevoRecord(tiempoRestante);
         $(".alert-success").removeClass("d-none");
         $(".modal").modal("show");
+        cuentaAtras('parar');
 
-    } else if (intentosRestantes == 0) {
+    } else if (tiempoRestante == 0) {
 
         turno = estadoPartida.FIN_PARTIDA;
-        guardarNuevoRecord(puntos);
-
-        /*
-            mostramos los elementos para teminar partida
-            la clase modal que dentro tiene dos mensajes.
-                en este caso al agotar los intentos mostramos el de derrota.
-        */
-
+        guardarNuevoRecord(tiempoRestante);
         $(".alert-danger").removeClass("d-none");
         $(".modal").modal("show");
+        cuentaAtras('parar');
 
-    } else {
-        turno = estadoPartida.PARADO;
     }
 
 
 }
 
-function guardarNuevoRecord(puntos) {
+function guardarNuevoRecord(tiempoRestante) {
     /*
     Si superas el record actual o lo igualas se guarda hasta que lo superen.
     Las iniciales elegidas en ajustes son las que se guardan tambien, por defecto
     se guarda las iniciale "DFL" de "default".
     */
-    if (parseInt(localStorageAPI.leer("MejorPuntuacion")) <= puntos) {
-        localStorageAPI.actualizar("MejorPuntuacion", puntos);
+    if (parseInt(localStorageAPI.leer("MejorPuntuacion")) < tiempoRestante) {
+        localStorageAPI.actualizar("MejorPuntuacion", tiempoRestante);
         if ($("#nombre").val() == "" || $("#nombre").val().length < 3) {
             localStorageAPI.actualizar("Iniciales", "DFL");
         } else {
@@ -222,4 +254,32 @@ function leerJson() {
         cartas = bararjar(cartas);
         repartir(cortarBaraja(cartas));
     });
+}
+
+function generate() {
+    anime({
+        targets: '.block',
+        translateX: function() {
+            return anime.random(-700, 700);
+        },
+        translateY: function() {
+            return anime.random(-700, 700);
+        },
+        scale: function() {
+            return anime.random(1, 5);
+        }
+    })
+}
+
+function cargarfondo() {
+    const container = document.querySelector('.fondo');
+
+    for (var i = 0; i <= 100; i++) {
+        const blocks = document.createElement('div');
+        blocks.classList.add('block');
+        container.appendChild(blocks);
+
+    }
+
+    generate();
 }
