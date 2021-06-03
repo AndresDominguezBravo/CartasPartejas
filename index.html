@@ -17,14 +17,8 @@
     <script src="js/main.js"></script>
     <script src="js/anime.min.js"></script>
 
-
-
-
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-
 
     <title>Juego Jquery</title>
 
@@ -32,7 +26,10 @@
 
 <body>
     <div class="fondo">
-        <button id="iniciar">Comenzar el juego</button>
+        <div class="formulario">
+            <input type="text" id="nombre" maxlength="3" placeholder="Iniciales del jugador" class="nombre form-control"><br>
+            <button id="iniciar">Comenzar el juego</button>
+        </div>
     </div>
     <div class="cabecera row col-12">
         <div class="top-tres col-4 text-center">
@@ -40,17 +37,21 @@
             <span></span>
             <span></span>
         </div>
-        <div class="score col-4 text-center">
-            <p>Intentos: <span></span> </p>
-            <p>Tiempo: <span></span> </p>
+        <div class="score col-4 d-flex flex-wrap align-content-center justify-content-center">
+            <span class="tiempo"></span>
         </div>
         <div class="botonera col-4 d-flex flex-wrap align-content-center justify-content-center">
             <button type="button" id="modal" data-toggle="modal" data-target=".bd-example-modal-sm" class="btn"><i class="fas fa-cog text-white"></i></button>
         </div>
     </div>
     <div class="row tablero d-flex justify-content-between col-12">
-        <div id="carta" class="base-carta">
+        <div id="carta" class="d-none base-carta">
             <div class='oculta'>
+                <hr>
+                <hr>
+                <hr>
+                <hr>
+                <hr>
                 <hr>
                 <hr>
                 <hr>

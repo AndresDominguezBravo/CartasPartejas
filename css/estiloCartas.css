@@ -39,6 +39,19 @@ body {
     background: #dfbbb6;
 }
 
+.nombre {
+    width: 222px;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: #fff;
+    font-size: 1.2em;
+    margin: 10px;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.25);
+}
+
 button {
     position: relative;
     z-index: 1;
@@ -184,4 +197,9 @@ button {
 
 .active {
     border: 1px solid red;
+}
+
+.tiempo {
+    font-size: 55px;
+    font-family: fantasy;
 }

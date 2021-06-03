@@ -10,14 +10,11 @@ var tiempoRestante;
 var formatoCarta;
 var contadorTiempo;
 var encontrados = 0;
-const tiempo = 60;
+const tiempo = 90;
 console.log(Object.keys(localStorage));
 
 $("document").ready(function() {
     cargarfondo();
-    //iniciarPartida();
-    //leerJson();
-
 
     $("#reiniciar").click(function() {
         resetPartida();
@@ -44,23 +41,28 @@ $("document").ready(function() {
 });
 
 
+function flipCarta(carta) {
+    if (carta.hasClass("oculta")) {
+        $(carta).parent().addClass("rotar");
+        $(carta).removeClass("oculta").addClass("carta");
+    } else {
+        $(carta).addClass("oculta").removeClass("carta");
+        $(carta).parent().removeClass("rotar");
+    }
+
+}
 
 $(document).on('click', '.oculta', function() {
 
     if (turno != estadoPartida.FIN_PARTIDA) {
         if (turno == estadoPartida.PARADO) {
-
-            $(this).parent().addClass("rotar");
-            $(this).removeClass("oculta").addClass("carta");
-
-
             ultimaCartaLevantada = $(this);
+            flipCarta(ultimaCartaLevantada);
             turno = estadoPartida.LEVANTO;
 
         } else if (turno == estadoPartida.LEVANTO) {
-            $(this).parent().addClass("rotar");
-            $(this).removeClass("oculta").addClass("carta");
             var cartaActural = $(this);
+            flipCarta(cartaActural);
             validarPareja(ultimaCartaLevantada, cartaActural);
         }
     }
@@ -70,9 +72,7 @@ $(document).on('click', '.oculta', function() {
 
 function iniciarPartida() {
     //dar valor a el Marcador de puntos.
-
-    //$(".score").children().last().children().text(puntos);
-    $(".score").children().first().children().text(totalIntentos);
+    // $(".score").children().first().children().text(totalIntentos);
 
     //copiar el html del formato de la carta.
     formatoCarta = $("#carta").clone(true);
@@ -87,6 +87,7 @@ function iniciarPartida() {
     $(".top-tres").children().last().text(localStorageAPI.leer("MejorPuntuacion"));
 
     $("#iniciar").hide();
+    $("#nombre").hide();
     tiempoRestante = tiempo;
     cuentaAtras();
 
@@ -94,10 +95,11 @@ function iniciarPartida() {
 
 function cuentaAtras(parametroTiempo) {
     if (tiempoRestante <= 5) {
-        $(".score").children().last().children().css("color", "red");
-        $(".score").children().last().children().text(tiempoRestante);
+        $(".tiempo").css("color", "red");
+        $(".tiempo").text(tiempoRestante);
     } else {
-        $(".score").children().last().children().text(tiempoRestante);
+        $(".tiempo").css("color", "white");
+        $(".tiempo").text(tiempoRestante);
     }
 
     if (parametroTiempo == 'parar') {
@@ -116,13 +118,13 @@ function cuentaAtras(parametroTiempo) {
 }
 
 function resetPartida() {
-    totalIntentos = 0;
+    //totalIntentos = 0;
     encontrados = 0;
     cuentaAtras('parar');
     tiempoRestante = tiempo;
     cuentaAtras();
-    $(".score").children().first().children().text(totalIntentos);
-    $(".score").children().last().children().text(tiempoRestante);
+    //$(".score").children().first().children().text(totalIntentos);
+    $(".tiempo").text(tiempoRestante);
     $(".alert-success").addClass("d-none");
     $(".alert-danger").addClass("d-none");
 
@@ -140,10 +142,13 @@ function validarPareja(ultimaCartaLevantada, cartaActural) {
 
     } else {
         setTimeout(function() {
-            cartaActural.addClass("oculta").removeClass("carta");
-            ultimaCartaLevantada.addClass("oculta").removeClass("carta");
-            cartaActural.parent().removeClass("rotar");
-            ultimaCartaLevantada.parent().removeClass("rotar");
+            // cartaActural.addClass("oculta").removeClass("carta");
+            // ultimaCartaLevantada.addClass("oculta").removeClass("carta");
+            flipCarta(ultimaCartaLevantada);
+            flipCarta(cartaActural);
+
+            // cartaActural.parent().removeClass("rotar");
+            // ultimaCartaLevantada.parent().removeClass("rotar");
 
         }, 1500);
         totalIntentos++;
@@ -186,10 +191,10 @@ function guardarNuevoRecord(tiempoRestante) {
     */
     if (parseInt(localStorageAPI.leer("MejorPuntuacion")) < tiempoRestante) {
         localStorageAPI.actualizar("MejorPuntuacion", tiempoRestante);
-        if ($("#nombre").val() == "" || $("#nombre").val().length < 3) {
+        if ($(".nombre").val() == "" || $(".nombre").val().length < 3) {
             localStorageAPI.actualizar("Iniciales", "DFL");
         } else {
-            localStorageAPI.actualizar("Iniciales", $("#nombre").val().toUpperCase());
+            localStorageAPI.actualizar("Iniciales", $(".nombre").val().toUpperCase());
         }
         $(".top-tres").children().eq(1).text(localStorageAPI.leer("Iniciales"));
         $(".top-tres").children().last().text(localStorageAPI.leer("MejorPuntuacion"));
